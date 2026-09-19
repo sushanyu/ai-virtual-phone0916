@@ -5090,7 +5090,7 @@ function normalizeChatPayload(payload: unknown): Partial<CheckPhoneChatPayload> 
       const messages = (Array.isArray(thread.messages) ? thread.messages : [])
         .map((entry) => normalizeBubble(entry))
         .filter(Boolean) as CheckPhoneChatPayload["conversations"][number]["messages"];
-      const slicedMessages = messages.slice(0, 10);
+      const slicedMessages = messages.slice(0, 40);
       const lastMessage = slicedMessages[slicedMessages.length - 1];
       if (!id || !name || !tagLabel || slicedMessages.length === 0 || !lastMessage) return null;
       return {
@@ -5120,7 +5120,7 @@ function normalizeChatPayload(payload: unknown): Partial<CheckPhoneChatPayload> 
       const messages = (Array.isArray(group.messages) ? group.messages : [])
         .map((entry) => normalizeBubble(entry, true))
         .filter(Boolean) as CheckPhoneChatPayload["groups"][number]["messages"];
-      const slicedMessages = messages.slice(0, 10);
+      const slicedMessages = messages.slice(0, 40);
       const lastMessage = slicedMessages[slicedMessages.length - 1];
       if (!id || !name || !memberCountLabel || !activityLabel || slicedMessages.length === 0 || !lastMessage) return null;
       return {
