@@ -1074,6 +1074,7 @@ export function createOrGetSession(contactId: string): ChatSession {
         bilingualTranslationEnabled: true,
         collapseBilingualTranslation: true,
         visionImagePromptLimit: DEFAULT_VISION_IMAGE_PROMPT_LIMIT,
+        autoReplyEnabled: true,
     };
     saveChatSessions([newSession, ...sessions]); // Prepend new session
     return newSession;
@@ -1091,6 +1092,7 @@ export function createGroupSession(groupName: string, participantIds: string[], 
         bilingualTranslationEnabled: true,
         collapseBilingualTranslation: true,
         visionImagePromptLimit: DEFAULT_VISION_IMAGE_PROMPT_LIMIT,
+        autoReplyEnabled: true,
         isGroup: true,
         groupName,
         participantIds,
