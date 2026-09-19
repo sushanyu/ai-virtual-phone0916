@@ -299,6 +299,7 @@ export function ChatSettingsPanel({
     const [voiceBackground, setVoiceBackground] = useState<string>(session.voiceBackground || "");
     const [isPinned, setIsPinned] = useState(session.isPinned || false);
     const [autoReplyEnabled, setAutoReplyEnabled] = useState(session.autoReplyEnabled !== false);
+    const [autoReplyEnabled, setAutoReplyEnabled] = useState(session.autoReplyEnabled !== false);
     // 自定义状态栏（状态区）
     const [statusRegion, setStatusRegion] = useState<StatusRegionConfig>(() => getStatusRegionConfig(session.id));
     const [showStatusRegionDialog, setShowStatusRegionDialog] = useState(false);

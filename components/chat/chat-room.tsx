@@ -2692,7 +2692,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
         isGeneratingRef.current = false;
         setIsGenerating(false);
         clearGenerationLock(session.id);
-        setPendingGenerate(true);
+        setPendingGenerate(session.autoReplyEnabled !== false);
         syncMessagesFromStorage();
         showChatToast("已停止本轮生成");
     };
@@ -3449,7 +3449,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
             ...(mediaUrl ? { mediaUrl } : {}),
         });
         setMessages(prev => [...prev, newMsg]);
-        setPendingGenerate(true);
+        setPendingGenerate(session.autoReplyEnabled !== false);
         return true;
     };
 
@@ -3471,7 +3471,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
             mediaType: "system_instruction",
         });
         setMessages(prev => [...prev, newMsg]);
-        setPendingGenerate(true);
+        setPendingGenerate(session.autoReplyEnabled !== false);
         return true;
     };
 
@@ -3869,7 +3869,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                 const latestMsgs = loadChatMessages(session.id);
                 const last = latestMsgs[latestMsgs.length - 1];
                 if (last && last.role === "user") {
-                    setPendingGenerate(true);
+                    setPendingGenerate(session.autoReplyEnabled !== false);
                 }
             } else if (!activeGenerationRuns.has(session.id)) {
                 // 本轮被外部取消且没有新一轮接手：仍需复位，否则「生成中」标记永久卡死，
