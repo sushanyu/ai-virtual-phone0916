@@ -3885,7 +3885,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
     // 收起键盘（或关掉表情/加号面板）并安静 N 秒后自动触发回复，
     // 等价于替用户点一次「触发回复」。判定全在 hook 内部，配置关掉后与手动模式一致。
     useKeyboardDismissAutoSend(wrapperRef, {
-        active: !offlineMode && !isMultiSelectMode,
+        active: !offlineMode && !isMultiSelectMode && session.autoReplyEnabled !== false,
         pending: pendingGenerate,
         generating: isGenerating,
         panelOpen: showEmojiPanel || showStickerPanel || showPlusMenu,
@@ -3981,7 +3981,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                 });
                 setMessages(prev => [...prev, diceAside]);
             }
-            setPendingGenerate(true);
+            setPendingGenerate(session.autoReplyEnabled !== false);
             // 按回复键发送：消息落库后立即触发模型回复（无论插件是否异步改写，
             // 都在消息真正写入后触发，避免回复基于旧上下文）
             if (options?.autoReply) void triggerAIResponse();
