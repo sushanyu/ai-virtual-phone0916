@@ -77,6 +77,8 @@ export type ChatSession = {
     groupMutes?: Record<string, string>; // (characterId | "self") → mute expiry ISO
     allowAdminActionsOnUser?: boolean; // characters may kick/mute the user (default off)
     isSpectator?: boolean; // 围观群：用户不在群内，只能生成/线下
+    /** 自动回复开关：关闭后用户发送消息不会触发 AI 自动回复 */
+    autoReplyEnabled?: boolean;
 };
 
 export type ChatMessageStatus = "sending" | "sent" | "read" | "failed";

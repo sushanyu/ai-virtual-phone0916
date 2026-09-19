@@ -298,6 +298,7 @@ export function ChatSettingsPanel({
     const [videoBackground, setVideoBackground] = useState<string>(session.videoBackground || "");
     const [voiceBackground, setVoiceBackground] = useState<string>(session.voiceBackground || "");
     const [isPinned, setIsPinned] = useState(session.isPinned || false);
+    const [autoReplyEnabled, setAutoReplyEnabled] = useState(session.autoReplyEnabled !== false);
     // 自定义状态栏（状态区）
     const [statusRegion, setStatusRegion] = useState<StatusRegionConfig>(() => getStatusRegionConfig(session.id));
     const [showStatusRegionDialog, setShowStatusRegionDialog] = useState(false);
@@ -987,6 +988,16 @@ export function ChatSettingsPanel({
 
                 {/* Toggles */}
                 <div className="menu-group">
+                    <div className="menu-item">
+                        <ChatInfoIcon icon={Play} color={BINDING_ACCENTS.voice} />
+                        <div className="menu-label-group">
+                            <span className="menu-label">自动回复</span>
+                            <span className="menu-desc">关闭后发送消息将不会触发 AI 自动回复</span>
+                        </div>
+                        <div className="menu-right">
+                            <Toggle checked={autoReplyEnabled} onChange={c => { setAutoReplyEnabled(c); updateSession({ autoReplyEnabled: c }); }} />
+                        </div>
+                    </div>
                     <div className="menu-item">
                         <ChatInfoIcon icon={Pin} color={BINDING_ACCENTS.preset} />
                         <div className="menu-label-group"><span className="menu-label">置顶聊天</span></div>

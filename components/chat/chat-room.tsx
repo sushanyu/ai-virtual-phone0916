@@ -3433,7 +3433,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                 mediaData: { pokeSender, pokeTarget },
             });
             setMessages(prev => [...prev, sysMsg]);
-            setPendingGenerate(true);
+            setPendingGenerate(session.autoReplyEnabled !== false);
             return true;
         }
 
