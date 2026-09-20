@@ -34,9 +34,10 @@ export default function RootLayout({
         <meta name="theme-color" content="#f8f7f2" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <link rel="icon" href="/icon-192.png" type="image/png" />
-        <meta name="apple-mobile-web-app-capable" content="no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="float" />
-        <meta name="mobile-web-app-capable" content="no" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body>
         <PWAManifestInjector />
