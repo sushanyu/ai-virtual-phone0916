@@ -1085,21 +1085,22 @@
 
   :root {
     --phone-screen-width: 100vw;
-    --phone-screen-height: calc(100dvh - 56px);
+    --phone-screen-height: calc(100vh - 72px);
   }
 
   html,
   body {
-    overflow: auto;
+    overflow-y: auto !important;
     width: 100%;
     min-height: 100%;
+    touch-action: auto !important;
     background: var(--c-page-body-bg);
   }
 
   .app-root {
     width: 100vw;
     min-height: 100%;
-    padding: 0 0 56px 0;
+    padding: 0 0 72px 0;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
