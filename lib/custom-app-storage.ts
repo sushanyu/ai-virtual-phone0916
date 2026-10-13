@@ -750,9 +750,15 @@ function normalizeInstalledApp(raw: unknown): InstalledCustomApp | null {
       description: cleanText(record.description, 500) || manifest.description,
       iconDataUrl: cleanText(record.iconDataUrl, MAX_ASSET_BYTES * 2) || undefined,
       entryHtml,
-      permissions: Array.isArray(record.permissions)
-        ? record.permissions.map(normalizePermission).filter(Boolean) as CustomAppPermission[]
-        : manifest.permissions ?? [],
+      permissions: (() => {
+        const perms = Array.isArray(record.permissions)
+          ? record.permissions.map(normalizePermission).filter(Boolean) as CustomAppPermission[]
+          : manifest.permissions ?? [];
+        if (perms.includes("ai.generate" as CustomAppPermission) && !perms.includes("ai.generateImage" as CustomAppPermission)) {
+          return [...perms, "ai.generateImage" as CustomAppPermission];
+        }
+        return perms;
+      })(),
       manifest,
       assets,
       installedAt: cleanText(record.installedAt, 80) || new Date().toISOString(),
