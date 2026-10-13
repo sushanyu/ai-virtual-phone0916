@@ -1125,6 +1125,7 @@ export async function loadSingleHtmlCustomApp(file: File): Promise<InstalledCust
     "memory.readShortTerm",
     "memory.search",
     "ai.generate",
+    "ai.generateImage",
     "chat.read",
     "chat.sendMessage",
     "chat.sendCard",

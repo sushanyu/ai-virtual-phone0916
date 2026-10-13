@@ -217,6 +217,7 @@ const SINGLE_HTML_APP_PERMISSIONS: CustomAppPermission[] = [
     "memory.readShortTerm",
     "memory.search",
     "ai.generate",
+    "ai.generateImage",
     "chat.read",
     "chat.sendMessage",
     "chat.sendCard",
