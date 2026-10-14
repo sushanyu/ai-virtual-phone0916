@@ -541,7 +541,10 @@ html, body { min-height: 100%; }
 }
 
 function hasPermission(app: InstalledCustomApp, permission: string): boolean {
-  return app.permissions.includes(permission as never);
+  if (permission === "ai.generateImage" && app.permissions.includes("ai.generate" as never)) {
+    return true;
+  }
+  return app.permissions.includes(permission as never) || (app.manifest?.permissions?.includes(permission as never) ?? false);
 }
 
 function collectionName(value: unknown): string {
