@@ -541,10 +541,10 @@ html, body { min-height: 100%; }
 }
 
 function hasPermission(app: InstalledCustomApp, permission: string): boolean {
-  if (permission === "ai.generateImage" && app.permissions.includes("ai.generate" as never)) {
+  if (permission === "ai.generateImage" && (app.permissions?.includes("ai.generate" as never) || app.manifest?.permissions?.includes("ai.generate" as never))) {
     return true;
   }
-  return app.permissions.includes(permission as never) || (app.manifest?.permissions?.includes(permission as never) ?? false);
+  return (app.permissions?.includes(permission as never) ?? false) || (app.manifest?.permissions?.includes(permission as never) ?? false);
 }
 
 function collectionName(value: unknown): string {
@@ -1707,7 +1707,9 @@ export function CustomAppRunner({
         : generateCustomAppText(app, { ...launchRecord, ...record });
     }
     if (action === "ai.generateImage") {
-      requirePermission("ai.generateImage");
+      if (!hasPermission(app, "ai.generateImage") && !hasPermission(app, "ai.generate")) {
+        requirePermission("ai.generateImage");
+      }
       return generateCustomAppImage(app, { ...launchRecord, ...record });
     }
     if (action === "ai.chat") {
