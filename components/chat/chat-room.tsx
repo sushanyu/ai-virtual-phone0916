@@ -6256,11 +6256,6 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                 showPlusMenu={showPlusMenu}
                 customPlusActions={customPlusActions}
                 onOpenLatestMonologue={() => {
-                    const hasMonologue = projectedMessages.some(m => m.role !== "user" && (m.innerMonologue || m.statusPanel || (m.freshStateValues && m.freshStateValues.length > 0) || (m.stateValues && m.stateValues.length > 0)));
-                    if (!hasMonologue) {
-                        showChatToast("暂无心声与状态记录");
-                        return;
-                    }
                     setLatestMonologueModalOpen(true);
                 }}
                 onClearQuote={() => setQuotingMessage(null)}
@@ -6565,9 +6560,8 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
             {/* 最新心声与状态抽屉 */}
             {latestMonologueModalOpen && (() => {
                 const latestMsg = [...projectedMessages].reverse().find(m => m.role !== "user" && (m.innerMonologue || m.statusPanel || (m.freshStateValues && m.freshStateValues.length > 0) || (m.stateValues && m.stateValues.length > 0)));
-                if (!latestMsg) return null;
-                const svs = latestMsg.freshStateValues ?? latestMsg.stateValues;
-                const senderTitle = session.isGroup ? (latestMsg.senderName || "群成员") : (character?.name || "TA");
+                const svs = latestMsg ? (latestMsg.freshStateValues ?? latestMsg.stateValues) : undefined;
+                const senderTitle = latestMsg ? (session.isGroup ? (latestMsg.senderName || "群成员") : (character?.name || "TA")) : (character?.name || "TA");
                 return (
                     <div
                         className="modal-overlay modal-overlay-bottom"
@@ -6591,12 +6585,17 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                                 </button>
                             </div>
                             <div className="chat-reasoning-sheet-body flex flex-col gap-3 max-h-[70vh] overflow-y-auto pb-4">
-                                {svs && svs.length > 0 && (
+                                {!latestMsg && (
+                                    <div className="text-center py-6 text-[var(--c-icon)] ts-13">
+                                        暂无心声与状态记录
+                                    </div>
+                                )}
+                                {latestMsg && svs && svs.length > 0 && (
                                     <div className="bg-[var(--c-input)] p-3 rounded-xl">
                                         <StateValuesPanel stateValues={svs} />
                                     </div>
                                 )}
-                                {latestMsg.statusPanel && (
+                                {latestMsg && latestMsg.statusPanel && (
                                     <div className="chat-status-bare">
                                         {latestMsg.statusRegionMode === "custom" && statusRegionCfg.renderHtml.trim() ? (
                                             <CustomStatusFrame html={statusRegionCfg.renderHtml} raw={latestMsg.statusPanel} />
@@ -6605,7 +6604,7 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                                         )}
                                     </div>
                                 )}
-                                {latestMsg.innerMonologue && (
+                                {latestMsg && latestMsg.innerMonologue && (
                                     <div className="chat-thought-card !my-0">
                                         <div className="chat-thought-title">💭 内心独白</div>
                                         <div className="chat-thought-body">
