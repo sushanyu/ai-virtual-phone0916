@@ -612,7 +612,6 @@ const ChatTextInputBar = memo(forwardRef<ChatTextInputHandle, {
     showStickerPanel: boolean;
     showPlusMenu: boolean;
     customPlusActions: RegisteredCustomAppChatPlusAction[];
-    onOpenLatestMonologue?: () => void;
     onClearQuote: () => void;
     onToggleOfflineMode: () => void;
     onClosePanels: () => void;
@@ -644,7 +643,6 @@ const ChatTextInputBar = memo(forwardRef<ChatTextInputHandle, {
     showStickerPanel,
     showPlusMenu,
     customPlusActions,
-    onOpenLatestMonologue,
     onClearQuote,
     onToggleOfflineMode,
     onClosePanels,
@@ -830,19 +828,6 @@ const ChatTextInputBar = memo(forwardRef<ChatTextInputHandle, {
                         <circle cx="12" cy="10" r="3" />
                     </svg>
                 </button>
-                {onOpenLatestMonologue && (
-                    <button
-                        type="button"
-                        onClick={onOpenLatestMonologue}
-                        className="ui-bare-btn text-[var(--c-text)]"
-                        aria-label="查看最新心声"
-                        title="查看最新心声"
-                    >
-                        <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 14s-6-4-6-8c0-2.5 1.5-4 3.5-4 1 0 2 .5 2.5 1.5C8.5 2.5 9.5 2 10.5 2 12.5 2 14 3.5 14 6c0 4-6 8-6 8z" />
-                        </svg>
-                    </button>
-                )}
                 <button onClick={onToggleEmojiPanel} disabled={inputLocked} className="ui-bare-btn text-[var(--c-text)]" style={inputLocked ? { opacity: 0.35 } : undefined}>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></svg>
                 </button>
@@ -1299,7 +1284,6 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
     const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string>>(new Set());
     const [showConfirmMultiDelete, setShowConfirmMultiDelete] = useState(false);
     const [expandedMonologueId, setExpandedThinkingId] = useState<string | null>(null);
-    const [latestMonologueModalOpen, setLatestMonologueModalOpen] = useState(false);
     // 思维链底部弹窗：存当前查看的 reasoning 文本，null = 关闭
     const [reasoningSheetText, setReasoningSheetText] = useState<string | null>(null);
     // 思维链翻译（弹窗内点击翻译按钮生成，切换弹窗内容时重置）
@@ -6255,9 +6239,6 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                 showStickerPanel={showStickerPanel}
                 showPlusMenu={showPlusMenu}
                 customPlusActions={customPlusActions}
-                onOpenLatestMonologue={() => {
-                    setLatestMonologueModalOpen(true);
-                }}
                 onClearQuote={() => setQuotingMessage(null)}
                 onToggleOfflineMode={toggleOfflineMode}
                 onClosePanels={() => { setShowEmojiPanel(false); setShowStickerPanel(false); setShowPlusMenu(false); }}
@@ -6556,67 +6537,6 @@ export function ChatRoom({ session, onBack, onDeleted }: ChatRoomProps) {
                     </div>
                 </div>
             )}
-
-            {/* 最新心声与状态抽屉 */}
-            {latestMonologueModalOpen && (() => {
-                const latestMsg = [...projectedMessages].reverse().find(m => m.role !== "user" && (m.innerMonologue || m.statusPanel || (m.freshStateValues && m.freshStateValues.length > 0) || (m.stateValues && m.stateValues.length > 0)));
-                const svs = latestMsg ? (latestMsg.freshStateValues ?? latestMsg.stateValues) : undefined;
-                const senderTitle = latestMsg ? (session.isGroup ? (latestMsg.senderName || "群成员") : (character?.name || "TA")) : (character?.name || "TA");
-                return (
-                    <div
-                        className="modal-overlay modal-overlay-bottom"
-                        data-ui="modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="内心与状态"
-                        onClick={() => setLatestMonologueModalOpen(false)}
-                    >
-                        <div className="modal-sheet chat-reasoning-sheet" onClick={(e) => e.stopPropagation()}>
-                            <div className="chat-reasoning-sheet-handle" />
-                            <div className="chat-reasoning-sheet-header">
-                                <span className="chat-reasoning-sheet-title">💭 {senderTitle} 的心声与状态</span>
-                                <button
-                                    type="button"
-                                    className="chat-reasoning-sheet-close"
-                                    onClick={() => setLatestMonologueModalOpen(false)}
-                                    aria-label="关闭"
-                                >
-                                    <X size={18} strokeWidth={2} />
-                                </button>
-                            </div>
-                            <div className="chat-reasoning-sheet-body flex flex-col gap-3 max-h-[70vh] overflow-y-auto pb-4">
-                                {!latestMsg && (
-                                    <div className="text-center py-6 text-[var(--c-icon)] ts-13">
-                                        暂无心声与状态记录
-                                    </div>
-                                )}
-                                {latestMsg && svs && svs.length > 0 && (
-                                    <div className="bg-[var(--c-input)] p-3 rounded-xl">
-                                        <StateValuesPanel stateValues={svs} />
-                                    </div>
-                                )}
-                                {latestMsg && latestMsg.statusPanel && (
-                                    <div className="chat-status-bare">
-                                        {latestMsg.statusRegionMode === "custom" && statusRegionCfg.renderHtml.trim() ? (
-                                            <CustomStatusFrame html={statusRegionCfg.renderHtml} raw={latestMsg.statusPanel} />
-                                        ) : (
-                                            <BilingualTextBlock text={latestMsg.displayProjected ? latestMsg.statusPanel : renderDisplayText(latestMsg.statusPanel, 6, false)} mode="markdown" defaultExpanded />
-                                        )}
-                                    </div>
-                                )}
-                                {latestMsg && latestMsg.innerMonologue && (
-                                    <div className="chat-thought-card !my-0">
-                                        <div className="chat-thought-title">💭 内心独白</div>
-                                        <div className="chat-thought-body">
-                                            <BilingualTextBlock text={latestMsg.displayProjected ? latestMsg.innerMonologue : renderDisplayText(latestMsg.innerMonologue, 6, false)} mode="markdown" defaultExpanded />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                );
-            })()}
 
             {/* Red Packet / Transfer Detail Modal */}
             {mediaDetailMsg && (
